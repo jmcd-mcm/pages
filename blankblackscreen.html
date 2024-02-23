@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blank Black Screen</title>
+    <style>
+        #clock{
+            font-size: 150px;
+            color: #92a9d3;
+        }
+        #countdownDisplay{
+            font-size: 90px;
+            color: #9f9f9f;
+
+        }
+        .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* This makes the container take up the full screen height */
+    width: 100vw; /* This makes the container take up the full screen width */
+}
+
+.centered-content {
+    /* Add styles for your centered content here */
+    /* This is just for demonstration and can be adjusted as needed */
+    width: 90%; /* Or any specific size */
+    padding-bottom: 300px;
+    text-align: center;
+}
+
+    </style>
+</head>
+<body style="background-color: #000; cursor:none; height:100%; width:100%; overflow: hidden;">
+
+<div id="controls">
+    <button id="showTimeBtn">Show Time</button>
+    <button id="hideTimeBtn" style="display:none;">Hide Time</button>
+    <!-- Countdown Timer Elements -->
+    <input type="number" id="countdownInput" placeholder="Enter Minutes" min="1">
+    <button id="startCountdownBtn">Start Countdown</button>
+    <button id="stopCountdownBtn">Clear Countdown</button>
+</div>
+<button id="toggleControlsBtn">Hide Controls</button>
+<div class="container">
+    <div class="centered-content">
+<div id="clock" style="display:none;"></div>
+<div id="countdownDisplay"></div>
+    </div>
+</div>
+    
+    <script>
+
+    var countdownTimer; // Declare this outside of functions to access it globally
+
+        // Live Clock
+        function startLiveClock() {
+            setInterval(displayTime, 1000);
+        }
+            document.getElementById('showTimeBtn').onclick = function() {
+        displayTime(); // Initial display
+        setInterval(displayTime, 1000); // Update the time every second
+        document.getElementById('clock').style.display = 'block';
+        document.getElementById('showTimeBtn').style.display = 'none';
+        document.getElementById('hideTimeBtn').style.display = 'inline';
+    };
+
+    document.getElementById('hideTimeBtn').onclick = function() {
+        document.getElementById('clock').style.display = 'none';
+        document.getElementById('showTimeBtn').style.display = 'inline';
+        document.getElementById('hideTimeBtn').style.display = 'none';
+        // Note: Interval is not cleared here, so clock will continue to update in background
+    };
+
+    function displayTime() {
+        var now = new Date();
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var seconds = now.getSeconds();
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        // var timeString = hours + ':' + minutes + ':' + seconds;  // use this one to have seconds
+        var timeString = hours + ':' + minutes; // just HH:MM
+        document.getElementById('clock').textContent = timeString;
+    }
+    document.getElementById('stopCountdownBtn').onclick = function() {
+        stopCountdown();
+    };
+
+    // Countdown Timer
+    document.getElementById('startCountdownBtn').onclick = function() {
+        var seconds = document.getElementById('countdownInput').value;
+        startCountdown(seconds);
+    };
+
+    function startCountdown(seconds) {
+        document.getElementById('countdownDisplay').textContent = seconds + " Minutes remaining";
+        countdownTimer = setInterval(function() {
+            seconds--;
+            document.getElementById('countdownDisplay').textContent = seconds + " Minutes remaining";
+
+            if (seconds <= 0) {
+                clearInterval(countdownTimer);
+                document.getElementById('countdownDisplay').textContent = "Time's up!";
+            }
+        }, 60000);
+    }
+
+
+
+    function stopCountdown() {
+        clearInterval(countdownTimer);
+        document.getElementById('countdownDisplay').textContent = ''; // Clears the countdown display
+    }
+
+
+    document.getElementById('toggleControlsBtn').onclick = function() {
+        var controls = document.getElementById('controls');
+        if (controls.style.display === 'none') {
+            controls.style.display = 'block';
+            this.textContent = 'Hide Controls';
+        } else {
+            controls.style.display = 'none';
+            this.textContent = 'Show Controls';
+        }
+    };
+
+    </script>
+</body>
+</html>
