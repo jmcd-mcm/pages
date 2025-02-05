@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>School Digital Clock & Timer</title>
+  <style>
+    /* ========== GLOBAL STYLES ========== */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #1e1e1e; /* Dark background */
+      color: #ffffff;           /* Light text */
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      width: 100vw;
+      box-sizing: border-box;
+    }
+
+    h1, h2, h3, h4, h5 {
+      margin: 0.2em 0;
+      text-align: center;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap; /* Allows wrapping on small screens */
+      align-items: flex-start;
+      justify-content: center;
+      width: 100%;
+      max-width: 1400px;
+      gap: 2vw; /* Spacing between boxes */
+      padding: 2vh 2vw;
+      box-sizing: border-box;
+    }
+
+    .card {
+      background-color: #2e2e2e;
+      border-radius: 0.5em;
+      padding: 2vh 2vw;
+      margin: 1vh 1vw;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      flex: 1 1 300px; /* Grows and shrinks, min 300px wide */
+      max-width: 400px;
+      box-sizing: border-box;
+    }
+
+    /* ========== DIGITAL CLOCK STYLES ========== */
+    .clock-display {
+      font-size: 5vh;  /* Scales with viewport height */
+      font-weight: bold;
+      text-align: center;
+    }
+    .date-display {
+      font-size: 2.5vh;
+      text-align: center;
+      margin-top: 0.5em;
+    }
+
+    /* ========== COUNTDOWN TIMER STYLES ========== */
+    .timer-section label,
+    .timer-section input,
+    .timer-section button {
+      display: block;
+      margin: 0.5em auto;
+      text-align: center;
+    }
+    .timer-section input {
+      width: 50%;
+      font-size: 2vh;
+      padding: 0.2em;
+      text-align: center;
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border: 1px solid #555;
+      border-radius: 0.3em;
+    }
+    .timer-section button {
+      font-size: 2vh;
+      padding: 0.5em 1em;
+      background-color: #444;
+      color: #fff;
+      border: none;
+      border-radius: 0.3em;
+      cursor: pointer;
+    }
+    .timer-display {
+      font-size: 3vh;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 1em;
+    }
+
+    /* ========== SCHEDULE STYLES ========== */
+    .schedule-container {
+      position: relative; /* Needed for absolute positioning of the time line */
+      width: 80vw;        /* Responsive width; adjust as needed */
+      max-width: 300px;
+      height: 70vh;       /* Responsive height; adjust as needed */
+      background-color: #2e2e2e;
+      border-radius: 0.5em;
+      overflow: hidden; /* So the line doesn’t overflow the container */
+      margin: 0 auto;   /* Center it */
+    }
+
+    .period-block {
+      /* 9 periods -> each block is 1/9 of container height */
+      height: calc(100% / 9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid #444;
+      font-size: 2vh;
+    }
+    .period-block:last-child {
+      border-bottom: none; /* no border for last one */
+    }
+
+    /* The horizontal line indicating current time */
+    #currentTimeLine {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #ff0000;
+      pointer-events: none; /* So it doesn't interfere with clicks */
+      /* top will be set by JavaScript */
+    }
+
+    /* Responsive tweak: stacked on narrow screens */
+    @media (max-width: 600px) {
+      .schedule-container {
+        width: 90vw;
+        height: 60vh;
+      }
+      .clock-display {
+        font-size: 4vh;
+      }
+      .date-display {
+        font-size: 2vh;
+      }
+      .timer-section input {
+        width: 70%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>School Day Dashboard</h1>
+
+  <div class="container">
+    <!-- ========== DIGITAL CLOCK CARD ========== -->
+    <div class="card" id="clockCard">
+      <h2>Digital Clock</h2>
+      <div class="clock-display" id="clockDisplay">--:--</div>
+      <div class="date-display" id="dateDisplay">Day, YYYY-MM-DD</div>
+    </div>
+
+    <!-- ========== COUNTDOWN TIMER CARD ========== -->
+    <div class="card timer-section" id="timerCard">
+      <h2>Countdown Timer</h2>
+      <label for="timerInput">Enter Time (HH:MM):</label>
+      <input type="text" id="timerInput" placeholder="e.g. 01:30 for 1hr30min" />
+      <button id="startTimerBtn">Start</button>
+      <!-- New Reset button -->
+      <button id="resetTimerBtn">Reset</button>
+      <div class="timer-display" id="timerDisplay">00:00</div>
+    </div>
+
+    <!-- ========== SCHOOL SCHEDULE CARD ========== -->
+    <div class="card" id="scheduleCard">
+      <h2>School Periods</h2>
+      <div class="schedule-container" id="scheduleContainer">
+        <!-- Horizontal line for current time -->
+        <div id="currentTimeLine"></div>
+
+        <!-- 9 Period blocks (equal height) -->
+        <div class="period-block">Period 1<br/>08:30 - 09:15</div>
+        <div class="period-block">Period 2<br/>09:20 - 10:05</div>
+        <div class="period-block">Period 3<br/>10:25 - 11:10</div>
+        <div class="period-block">Period 4<br/>11:15 - 12:00</div>
+        <div class="period-block">Period 5<br/>12:05 - 12:50</div>
+        <div class="period-block">Period 6<br/>12:50 - 13:50</div>
+        <div class="period-block">Period 7<br/>13:50 - 14:35</div>
+        <div class="period-block">Period 8<br/>14:40 - 15:25</div>
+        <div class="period-block">Period 9<br/>15:30 - 16:15</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===========================
+    // 1) DIGITAL CLOCK
+    // ===========================
+    function updateClock() {
+      const now = new Date();
+      // 24-hour format HH:MM
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+      // Format hours/minutes to 2 digits
+      const hh = String(hours).padStart(2, "0");
+      const mm = String(minutes).padStart(2, "0");
+
+      // Update the digital clock on the page
+      const clockDisplay = document.getElementById("clockDisplay");
+      clockDisplay.textContent = `${hh}:${mm}`;
+
+      // Update the page title in the browser tab
+      document.title = `${hh}:${mm}`;
+
+      // Day of week & date
+      const dayOfWeek = dayNames[now.getDay()];
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const date = String(now.getDate()).padStart(2, "0");
+      const dateDisplay = document.getElementById("dateDisplay");
+      dateDisplay.textContent = `${dayOfWeek}, ${year}-${month}-${date}`;
+    }
+
+    // ===========================
+    // 2) COUNTDOWN TIMER
+    // ===========================
+    let countdownInterval = null;
+    let countdownRemainingSeconds = 0;
+
+    function parseHHMM(input) {
+      // Expecting something like "01:30" -> returns total minutes
+      const parts = input.split(":");
+      if (parts.length !== 2) return null;
+      let hh = parseInt(parts[0], 10);
+      let mm = parseInt(parts[1], 10);
+      if (isNaN(hh) || isNaN(mm) || hh < 0 || mm < 0 || mm > 59) return null;
+      return hh * 60 + mm;
+    }
+
+    function formatHHMM(totalMinutes) {
+      // Convert totalMinutes -> "HH:MM"
+      if (totalMinutes < 0) totalMinutes = 0;
+      const hh = Math.floor(totalMinutes / 60);
+      const mm = totalMinutes % 60;
+      return String(hh).padStart(2, "0") + ":" + String(mm).padStart(2, "0");
+    }
+
+    function startCountdown() {
+      const inputVal = document.getElementById("timerInput").value;
+      const totalMinutes = parseHHMM(inputVal);
+      if (totalMinutes === null) {
+        alert("Invalid format. Use HH:MM (e.g. 01:30).");
+        return;
+      }
+
+      // Convert minutes to seconds
+      countdownRemainingSeconds = totalMinutes * 60;
+
+      // Clear any previous interval
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
+
+      // Update display immediately
+      updateTimerDisplay();
+
+      // Start interval to decrement
+      countdownInterval = setInterval(() => {
+        countdownRemainingSeconds--;
+        if (countdownRemainingSeconds < 0) {
+          countdownRemainingSeconds = 0;
+          clearInterval(countdownInterval);
+        }
+        updateTimerDisplay();
+      }, 1000); // every second
+    }
+
+    function updateTimerDisplay() {
+      const timerDisplay = document.getElementById("timerDisplay");
+      // Convert current seconds to minutes
+      const remainingMinutes = Math.floor(countdownRemainingSeconds / 60);
+      // We are only displaying HH:MM, not seconds
+      timerDisplay.textContent = formatHHMM(remainingMinutes);
+    }
+
+    // NEW: function to reset the timer
+    function resetCountdown() {
+      countdownRemainingSeconds = 0;
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
+      updateTimerDisplay(); // Show 00:00
+      document.getElementById("timerInput").value = ""; // Clear input field
+    }
+
+    // ===========================
+    // 3) SCHOOL PERIOD TRACKER
+    // ===========================
+    // We have 9 periods from 08:30 to 16:15
+    // We'll position a line based on fraction of time within that range
+    function updateCurrentTimeLine() {
+      const container = document.getElementById("scheduleContainer");
+      const line = document.getElementById("currentTimeLine");
+
+      // Times in minutes after midnight
+      const startHour = 8;   // 08
+      const startMin = 30;   // 30
+      const startTotal = startHour * 60 + startMin; // 510
+
+      const endHour = 16;  // 16
+      const endMin = 15;   // 15
+      const endTotal = endHour * 60 + endMin; // 975
+
+      const now = new Date();
+      const nowTotal = now.getHours() * 60 + now.getMinutes();
+
+      const totalDuration = endTotal - startTotal; // 975 - 510 = 465 minutes
+      let elapsed = nowTotal - startTotal;
+      // If before start, clamp to 0, if after end, clamp to totalDuration
+      if (elapsed < 0) elapsed = 0;
+      if (elapsed > totalDuration) elapsed = totalDuration;
+
+      const fraction = elapsed / totalDuration;
+      const containerHeight = container.offsetHeight;
+
+      // The line's 'top' position in px
+      const topPos = fraction * containerHeight;
+      line.style.top = `${topPos}px`;
+    }
+
+    // ===========================
+    // EVENT LISTENERS & INTERVALS
+    // ===========================
+    window.addEventListener("DOMContentLoaded", () => {
+      // 1) Digital clock updates
+      updateClock();
+      setInterval(updateClock, 1000); // every second
+
+      // 2) Countdown timer setup
+      const startBtn = document.getElementById("startTimerBtn");
+      startBtn.addEventListener("click", startCountdown);
+
+      // Reset timer on click
+      const resetBtn = document.getElementById("resetTimerBtn");
+      resetBtn.addEventListener("click", resetCountdown);
+
+      // 3) Schedule line
+      updateCurrentTimeLine();
+      setInterval(updateCurrentTimeLine, 1000); // update every second
+    });
+  </script>
+</body>
+</html>
