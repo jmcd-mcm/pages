@@ -1,198 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>School Digital Clock & Timer</title>
-  <style>
-    /* ========== GLOBAL STYLES ========== */
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #1e1e1e; /* Dark background */
-      color: #ffffff;           /* Light text */
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      height: 100vh;
-      width: 100vw;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8"/>
+    <title>School Digital Clock & Timer</title>
+    <style>
+        /* ========== GLOBAL STYLES ========== */
+        body {
+          margin: 0;
+          padding: 0;
+          background-color: #1e1e1e; /* Dark background */
+          color: #ffffff;           /* Light text */
+          font-family: sans-serif;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          height: 100vh;
+          width: 100vw;
+          box-sizing: border-box;
+        }
 
-    h1, h2, h3, h4, h5 {
-      margin: 0.2em 0;
-      text-align: center;
-    }
+        h1, h2, h3, h4, h5 {
+          margin: 0.2em 0;
+          text-align: center;
+        }
 
-    .container {
-      display: flex;
-      flex-wrap: wrap; /* Allows wrapping on small screens */
-      align-items: flex-start;
-      justify-content: center;
-      width: 100%;
-      max-width: 1400px;
-      gap: 2vw; /* Spacing between boxes */
-      padding: 2vh 2vw;
-      box-sizing: border-box;
-    }
+        .container {
+  display: flex;
+  flex-direction: row; /* Always keep items in a row */
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  padding: 2vh 2vw;
+  box-sizing: border-box;
+  flex-wrap: nowrap; /* Prevent wrapping */
+  overflow-x: auto; /* Enable horizontal scrolling if needed */
+}
 
-    .card {
-      background-color: #2e2e2e;
-      border-radius: 0.5em;
-      padding: 2vh 2vw;
-      margin: 1vh 1vw;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      flex: 1 1 300px; /* Grows and shrinks, min 300px wide */
-      max-width: 400px;
-      box-sizing: border-box;
-    }
+    /* Responsive tweak: Stack items vertically on small screens */
+@media (max-width: 650px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
 
-    /* ========== DIGITAL CLOCK STYLES ========== */
-    .clock-display {
-      font-size: 5vh;  /* Scales with viewport height */
-      font-weight: bold;
-      text-align: center;
-    }
-    .date-display {
-      font-size: 2.5vh;
-      text-align: center;
-      margin-top: 0.5em;
-    }
+        .card {
+          background-color: #2e2e2e;
+          border-radius: 0.5em;
+          padding: 2vh 2vw;
+          margin: 1vh 1vw;
+          box-shadow: 0 0 10px rgba(0,0,0,0.5);
+          flex: 1 1 300px; /* Grows and shrinks, min 300px wide */
+          max-width: 400px;
+          box-sizing: border-box;
+        }
 
-    /* ========== COUNTDOWN TIMER STYLES ========== */
-    .timer-section label,
-    .timer-section input,
-    .timer-section button {
-      display: block;
-      margin: 0.5em auto;
-      text-align: center;
-    }
-    .timer-section input {
-      width: 50%;
-      font-size: 2vh;
-      padding: 0.2em;
-      text-align: center;
-      background-color: #1e1e1e;
-      color: #ffffff;
-      border: 1px solid #555;
-      border-radius: 0.3em;
-    }
-    .timer-section button {
-      font-size: 2vh;
-      padding: 0.5em 1em;
-      background-color: #444;
-      color: #fff;
-      border: none;
-      border-radius: 0.3em;
-      cursor: pointer;
-    }
-    .timer-display {
-      font-size: 3vh;
-      font-weight: bold;
-      text-align: center;
-      margin-top: 1em;
-    }
+        /* ========== DIGITAL CLOCK STYLES ========== */
+        .clock-display {
+          font-size: 12vh;  /* Scales with viewport height */
+          font-weight: bold;
+          text-align: center;
+        }
+        .date-display {
+          font-size: 3vh;
+          text-align: center;
+          margin-top: 0.5em;
+        }
 
-    /* ========== SCHEDULE STYLES ========== */
-    .schedule-container {
-      position: relative; /* Needed for absolute positioning of the time line */
-      width: 80vw;        /* Responsive width; adjust as needed */
-      max-width: 300px;
-      height: 70vh;       /* Responsive height; adjust as needed */
-      background-color: #2e2e2e;
-      border-radius: 0.5em;
-      overflow: hidden; /* So the line doesn’t overflow the container */
-      margin: 0 auto;   /* Center it */
-    }
+        /* ========== COUNTDOWN TIMER STYLES ========== */
+        .timer-section label,
+        .timer-section input,
+        .timer-section button {
+          display: block;
+          margin: 0.5em auto;
+          text-align: center;
+        }
+        .timer-section input {
+          width: 50%;
+          font-size: 2vh;
+          padding: 0.2em;
+          text-align: center;
+          background-color: #1e1e1e;
+          color: #ffffff;
+          border: 1px solid #555;
+          border-radius: 0.3em;
+        }
+        .timer-section button {
+          font-size: 2vh;
+          padding: 0.5em 1em;
+          background-color: #444;
+          color: #fff;
+          border: none;
+          border-radius: 0.3em;
+          cursor: pointer;
+        }
+        .timer-display {
+          font-size: 3vh;
+          font-weight: bold;
+          text-align: center;
+          margin-top: 1em;
+        }
 
-    .period-block {
-      /* 9 periods -> each block is 1/9 of container height */
-      height: calc(100% / 9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-bottom: 1px solid #444;
-      font-size: 2vh;
-    }
-    .period-block:last-child {
-      border-bottom: none; /* no border for last one */
-    }
+        /* ========== SCHEDULE STYLES ========== */
+        .schedule-container {
+          position: relative; /* Needed for absolute positioning of the time line */
+          width: 80vw;        /* Responsive width; adjust as needed */
+          max-width: 300px;
+          height: 70vh;       /* Responsive height; adjust as needed */
+          background-color: #2e2e2e;
+          border-radius: 0.5em;
+          overflow: hidden; /* So the line doesn’t overflow the container */
+          margin: 0 auto;   /* Center it */
+        }
 
-    /* The horizontal line indicating current time */
-    #currentTimeLine {
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background-color: #ff0000;
-      pointer-events: none; /* So it doesn't interfere with clicks */
-      /* top will be set by JavaScript */
-    }
+        .period-block {
+          /* 9 periods -> each block is 1/9 of container height */
+          height: calc(100% / 9);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-bottom: 1px solid #444;
+          font-size: 2vh;
+        }
+        .period-block:last-child {
+          border-bottom: none; /* no border for last one */
+        }
 
-    /* Responsive tweak: stacked on narrow screens */
-    @media (max-width: 600px) {
-      .schedule-container {
-        width: 90vw;
-        height: 60vh;
-      }
-      .clock-display {
-        font-size: 4vh;
-      }
-      .date-display {
-        font-size: 2vh;
-      }
-      .timer-section input {
-        width: 70%;
-      }
-    }
-  </style>
+        /* The horizontal line indicating current time */
+        #currentTimeLine {
+          position: absolute;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background-color: #ff0000;
+          pointer-events: none; /* So it doesn't interfere with clicks */
+          /* top will be set by JavaScript */
+        }
+
+        /* Responsive tweak: stacked on narrow screens */
+        @media (max-width: 600px) {
+          .schedule-container {
+            width: 90vw;
+            height: 60vh;
+          }
+          .clock-display {
+            font-size: 4vh;
+          }
+          .date-display {
+            font-size: 2vh;
+          }
+          .timer-section input {
+            width: 70%;
+          }
+        }
+    </style>
 </head>
 <body>
-  <h1>School Day Dashboard</h1>
+<h1>School Day Dashboard</h1>
 
-  <div class="container">
+<div class="container">
+
 
     <!-- ========== COUNTDOWN TIMER CARD ========== -->
     <div class="card timer-section" id="timerCard">
-      <h2>Countdown Timer</h2>
-      <label for="timerInput">Enter Time (HH:MM):</label>
-      <input type="text" id="timerInput" placeholder="e.g. 01:30 for 1hr30min" />
-      <button id="startTimerBtn">Start</button>
-      <!-- New Reset button -->
-      <button id="resetTimerBtn">Reset</button>
-      <div class="timer-display" id="timerDisplay">00:00</div>
+        <h2>Countdown Timer</h2>
+        <label for="timerInput">Enter Time (HH:MM):</label>
+        <input type="text" id="timerInput" placeholder="e.g. 01:30 for 1hr30min"/>
+        <button id="startTimerBtn">Start</button>
+        <!-- New Reset button -->
+        <button id="resetTimerBtn">Reset</button>
+        <div class="timer-display" id="timerDisplay">00:00</div>
     </div>
-    
     <!-- ========== DIGITAL CLOCK CARD ========== -->
     <div class="card" id="clockCard">
-      <h2>Digital Clock</h2>
-      <div class="clock-display" id="clockDisplay">--:--</div>
-      <div class="date-display" id="dateDisplay">Day, YYYY-MM-DD</div>
+        <h2>Digital Clock</h2>
+        <div class="clock-display" id="clockDisplay">--:--</div>
+        <div class="date-display" id="dateDisplay">Day, YYYY-MM-DD</div>
     </div>
-
     <!-- ========== SCHOOL SCHEDULE CARD ========== -->
     <div class="card" id="scheduleCard">
-      <h2>School Periods</h2>
-      <div class="schedule-container" id="scheduleContainer">
-        <!-- Horizontal line for current time -->
-        <div id="currentTimeLine"></div>
+        <h2>School Periods</h2>
+        <div class="schedule-container" id="scheduleContainer">
+            <!-- Horizontal line for current time -->
+            <div id="currentTimeLine"></div>
 
-        <!-- 9 Period blocks (equal height) -->
-        <div class="period-block">Period 1<br/>08:30 - 09:15</div>
-        <div class="period-block">Period 2<br/>09:20 - 10:05</div>
-        <div class="period-block">Period 3<br/>10:25 - 11:10</div>
-        <div class="period-block">Period 4<br/>11:15 - 12:00</div>
-        <div class="period-block">Period 5<br/>12:05 - 12:50</div>
-        <div class="period-block">Period 6 (lunch)<br/>12:50 - 13:50</div>
-        <div class="period-block">Period 7<br/>13:50 - 14:35</div>
-        <div class="period-block">Period 8<br/>14:40 - 15:25</div>
-        <div class="period-block">Period 9<br/>15:30 - 16:15</div>
-      </div>
+            <!-- 9 Period blocks (equal height) -->
+            <div class="period-block">Period 1<br/>08:30 - 09:15</div>
+            <div class="period-block">Period 2<br/>09:20 - 10:05</div>
+            <div class="period-block">Period 3<br/>10:25 - 11:10</div>
+            <div class="period-block">Period 4<br/>11:15 - 12:00</div>
+            <div class="period-block">Period 5<br/>12:05 - 12:50</div>
+            <div class="period-block">Period 6<br/>12:50 - 13:50</div>
+            <div class="period-block">Period 7<br/>13:50 - 14:35</div>
+            <div class="period-block">Period 8<br/>14:40 - 15:25</div>
+            <div class="period-block">Period 9<br/>15:30 - 16:15</div>
+        </div>
     </div>
-  </div>
+</div>
 
-  <script>
+<script>
     // ===========================
     // 1) DIGITAL CLOCK
     // ===========================
@@ -350,6 +357,6 @@
       updateCurrentTimeLine();
       setInterval(updateCurrentTimeLine, 1000); // update every second
     });
-  </script>
+</script>
 </body>
 </html>
